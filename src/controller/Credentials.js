@@ -44,8 +44,9 @@ async function Login(req,res){
 const {username, password} = req.body;
 
 try{
-const query = "SELECT * FROM users";
-const [result] = await db.promise().query(query);
+                                            //!Specific user Dapat Talaga!
+const query = "SELECT * FROM users WHERE userName =?";
+const [result] = await db.promise().query(query, [username]);
 
 const findUsername = result.find(pro => pro.userName === username);
 
@@ -53,6 +54,7 @@ if(findUsername){
  let credential = false;
 
  for(let x of result){
+
     const seePassword = await bcrypt.compare(password,x.password);
     !seePassword? credential = false : credential = true;
  }
@@ -61,15 +63,11 @@ if(findUsername){
 
  //AccessToken E2;
  const AccessToken = AccessTokens(findUsername);
- 
- 
- res.CookieParser('token', AccessToken, {httpOnly: true, secure: false})
  res.json({message: "WELCOME!", id:findUsername.id, AccessToken, is_Admin: findUsername.is_admin});
 
 }else{
    res.json({message:"Credentials doesn't exist!", status:400})
 }
-
 }catch(error){
     console.log("NO DATA FOUND");
     res.json({message:"DATA NOT FOUND", status: 400})

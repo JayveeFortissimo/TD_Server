@@ -5,6 +5,6 @@ import { verify } from '../middleware/Authorization.js';
 const Routers = express.Router();
 
 Routers.post('/register', Register);
-Routers.post('/login',verify, Login);
+Routers.post('/login', Login);
 
 export default Routers;

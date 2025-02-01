@@ -2,6 +2,7 @@ import db from '../config/Database.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { AccessTokens, RefreshToken } from '../utils/Tokens.js';
 import CookieParser from 'cookie-parser';
 dotenv.config();
 
@@ -43,7 +44,6 @@ async function Login(req,res){
 const {username, password} = req.body;
 
 try{
-
 const query = "SELECT * FROM users";
 const [result] = await db.promise().query(query);
 
@@ -59,9 +59,12 @@ if(findUsername){
 
  if(!credential) return res.json({message: "Password is not corrected!"}); 
 
- const AccessToken = jwt.sign({id: findUsername.id}, process.env.ACCESS_TOKEN,{expiresIn: '1h'});
+ //AccessToken E2;
+ const AccessToken = AccessTokens(findUsername);
  
- return res.json({message: "WELCOME!", id:findUsername.id, AccessToken, is_Admin: findUsername.is_admin});
+ 
+ res.CookieParser('token', AccessToken, {httpOnly: true, secure: false})
+ res.json({message: "WELCOME!", id:findUsername.id, AccessToken, is_Admin: findUsername.is_admin});
 
 }else{
    res.json({message:"Credentials doesn't exist!", status:400})

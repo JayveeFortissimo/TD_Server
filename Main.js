@@ -10,13 +10,14 @@ const PORT = process.env.PORT || 8000;
 const App = express();
 
 
-App.use(cors());
+App.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
 App.use(cookieParser());
 App.use(express.json());
 
 
 App.use(MainRoutes);
-
-
 
 App.listen(PORT, () => console.log(`PORT ${PORT} is working`));

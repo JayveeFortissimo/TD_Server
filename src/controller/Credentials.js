@@ -63,6 +63,12 @@ if(findUsername){
  const AccessToken = AccessTokens(findUsername);
  
  //!Cookies Parser E12
+ req.io.emit('user', {
+  id: findUsername.id,
+ userName: findUsername.userName,
+ is_Admin: findUsername.is_admin
+ })
+
  res.cookie('token', AccessToken, {httpOnly: true, secure:false});
  res.json({message: "WELCOME!", id:findUsername.id,  user:findUsername.userName, AccessToken, is_Admin: findUsername.is_admin});
 

@@ -12,8 +12,15 @@ async function CreateTodo(req,res){
     await db.query(query, data);
 
     if(data.length === 0) return res.json("Not Successfully insert");
+     
+    req.io.emit("create",{
+      id:Math.floor(Math.random() * 100),
+      Title:Title,
+      Description: Description,
+      Date: Date,
+    });
 
-    return res.json("Not Successfully insert");
+    res.json("Not Successfully insert");
 
    }catch(error){ console.log(error) }
 
@@ -22,6 +29,7 @@ async function CreateTodo(req,res){
 
 async function getCreate(req,res) {
     
+
    const userId = req.user.id;
   
     try{
@@ -30,7 +38,7 @@ async function getCreate(req,res) {
 
     const [result] = await db.query(query, [userId]);
 
-    return res.json({status:200, data: result})
+    res.json({status:200, data: result})
 
     }catch(error) {console.log(error)}
 }

@@ -1,9 +1,7 @@
 import db from '../config/Database.js';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { AccessTokens, RefreshToken } from '../utils/Tokens.js';
-import CookieParser from 'cookie-parser';
 dotenv.config();
 
 async function Register(req,res) {
@@ -18,7 +16,7 @@ try{
 
       const hashedPassword = await bcrypt.hash(passwords, 10);
 
-      const [result] = await db.promise().query(query2);
+      const [result] = await db.query(query2);
 
       const Validations = result.some((pro) =>{
         return username === pro.userName || passwords === pro.password
@@ -44,9 +42,9 @@ async function Login(req,res){
 const {username, password} = req.body;
 
 try{
-                                            //!Specific user Dapat Talaga!
+                                        //!Specific user Dapat Talaga!
 const query = "SELECT * FROM users WHERE userName =?";
-const [result] = await db.promise().query(query, [username]);
+const [result] = await db.query(query, [username]);
 
 const findUsername = result.find(pro => pro.userName === username);
 
@@ -63,10 +61,13 @@ if(findUsername){
 
  //AccessToken E2;
  const AccessToken = AccessTokens(findUsername);
- res.json({message: "WELCOME!", id:findUsername.id, AccessToken, is_Admin: findUsername.is_admin});
+ 
+ //!Cookies Parser E12
+ res.cookie('token', AccessToken, {httpOnly: true, secure:false});
+ res.json({message: "WELCOME!", id:findUsername.id,  user:findUsername.userName, AccessToken, is_Admin: findUsername.is_admin});
 
 }else{
-   res.json({message:"Credentials doesn't exist!", status:400})
+   res.json({message:"Credentials doesn't exist!", status:400});
 }
 }catch(error){
     console.log("NO DATA FOUND");

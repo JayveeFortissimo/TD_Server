@@ -15,13 +15,12 @@ async function CreateTodo(req,res){
      
     req.io.emit("create",{
       id:Math.floor(Math.random() * 100),
-      Title:Title,
-      Description: Description,
-      Date: Date,
+      title:Title,
+      description: Description,
+      date: Date,
     });
 
     res.json("Not Successfully insert");
-
    }catch(error){ console.log(error) }
 
 };
